@@ -1,57 +1,49 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
+import { requireAdmin } from '@/lib/admin-auth';
 
-const resend = new Resend(process.env.RESEND_API_KEY || 're_UoPUesWQ_aoQrPnY2qM8Cn54rpAZ1Lq7U');
+function getResend() {
+    const key = process.env.RESEND_API_KEY;
+    if (!key) throw new Error('RESEND_API_KEY is not configured');
+    return new Resend(key);
+}
 
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+    const { error } = await requireAdmin();
+    if (error) return error;
     try {
-        const { data, error } = await resend.broadcasts.get(params.id);
-
-        if (error) {
-            return NextResponse.json({ error }, { status: 500 });
-        }
-
+        const { data, error: e } = await getResend().broadcasts.get(params.id);
+        if (e) return NextResponse.json({ error: e }, { status: 500 });
         return NextResponse.json({ data });
-    } catch (error) {
-        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    } catch (error: any) {
+        return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: 500 });
     }
 }
 
 export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+    const { error } = await requireAdmin();
+    if (error) return error;
     try {
-        const { data, error } = await resend.broadcasts.remove(params.id);
-
-        if (error) {
-            return NextResponse.json({ error }, { status: 500 });
-        }
-
+        const { data, error: e } = await getResend().broadcasts.remove(params.id);
+        if (e) return NextResponse.json({ error: e }, { status: 500 });
         return NextResponse.json({ data });
-    } catch (error) {
-        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    } catch (error: any) {
+        return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: 500 });
     }
 }
 
 export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+    const { error } = await requireAdmin();
+    if (error) return error;
     try {
         const body = await request.json();
-        const { subject, html } = body;
-
-        // Note: Resend only allows updating scheduled broadcasts or drafts usually? 
-        // The snippet provided: resend.broadcasts.update(id, options)
-
-        // Construct options object dynamically
         const options: any = {};
-        if (subject) options.subject = subject;
-        if (html) options.html = html;
-
-        const { data, error } = await resend.broadcasts.update(params.id, options);
-
-        if (error) {
-            return NextResponse.json({ error }, { status: 500 });
-        }
-
+        if (body.subject) options.subject = body.subject;
+        if (body.html) options.html = body.html;
+        const { data, error: e } = await getResend().broadcasts.update(params.id, options);
+        if (e) return NextResponse.json({ error: e }, { status: 500 });
         return NextResponse.json({ data });
-    } catch (error) {
-        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    } catch (error: any) {
+        return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: 500 });
     }
 }
