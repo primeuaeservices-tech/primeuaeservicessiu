@@ -26,6 +26,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { adminFetch } from '@/lib/admin-fetch';
 
 type Ticket = {
     id: number;
@@ -154,9 +155,8 @@ export default function TicketsPage() {
         }
         setSavingEdit(true);
         try {
-            const response = await fetch(`/api/admin/tickets/${selectedTicket.id}`, {
+            const response = await adminFetch(`/api/admin/tickets/${selectedTicket.id}`, {
                 method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(editForm),
             });
             const data = await response.json();
@@ -176,7 +176,7 @@ export default function TicketsPage() {
     const handleDeleteTicket = async (ticket: Ticket) => {
         setDeleting(true);
         try {
-            const response = await fetch(`/api/admin/tickets/${ticket.id}`, { method: 'DELETE' });
+            const response = await adminFetch(`/api/admin/tickets/${ticket.id}`, { method: 'DELETE' });
             const data = await response.json();
             if (!response.ok) throw new Error(data.error || 'Failed to delete ticket');
             toast.success('Ticket deleted');
@@ -206,9 +206,8 @@ export default function TicketsPage() {
         }
         setSendingReply(true);
         try {
-            const response = await fetch('/api/admin/send-reply', {
+            const response = await adminFetch('/api/admin/send-reply', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     ticketId: selectedTicket.id,
                     to: selectedTicket.email,

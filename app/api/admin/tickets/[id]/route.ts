@@ -14,7 +14,7 @@ export async function PATCH(
     request: NextRequest,
     { params }: { params: { id: string } }
 ) {
-    const { error: authError } = await requireAdmin();
+    const { error: authError } = await requireAdmin(request);
     if (authError) return authError;
 
     try {
@@ -54,7 +54,7 @@ export async function DELETE(
     request: NextRequest,
     { params }: { params: { id: string } }
 ) {
-    const { error: authError } = await requireAdmin();
+    const { error: authError } = await requireAdmin(request);
     if (authError) return authError;
 
     try {

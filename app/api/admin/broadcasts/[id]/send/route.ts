@@ -3,7 +3,7 @@ import { Resend } from 'resend';
 import { requireAdmin } from '@/lib/admin-auth';
 
 export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
-    const { error } = await requireAdmin();
+    const { error } = await requireAdmin(request);
     if (error) return error;
 
     const resendKey = process.env.RESEND_API_KEY;

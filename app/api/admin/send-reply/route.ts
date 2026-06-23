@@ -4,7 +4,7 @@ import { createClient } from '@supabase/supabase-js';
 import { requireAdmin, FROM_EMAIL } from '@/lib/admin-auth';
 
 export async function POST(request: NextRequest) {
-    const { error: authError } = await requireAdmin();
+    const { error: authError } = await requireAdmin(request);
     if (authError) return authError;
 
     try {

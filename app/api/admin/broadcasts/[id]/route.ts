@@ -9,7 +9,7 @@ function getResend() {
 }
 
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
-    const { error } = await requireAdmin();
+    const { error } = await requireAdmin(request);
     if (error) return error;
     try {
         const { data, error: e } = await getResend().broadcasts.get(params.id);
@@ -21,7 +21,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 }
 
 export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
-    const { error } = await requireAdmin();
+    const { error } = await requireAdmin(request);
     if (error) return error;
     try {
         const { data, error: e } = await getResend().broadcasts.remove(params.id);
@@ -33,7 +33,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
 }
 
 export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
-    const { error } = await requireAdmin();
+    const { error } = await requireAdmin(request);
     if (error) return error;
     try {
         const body = await request.json();

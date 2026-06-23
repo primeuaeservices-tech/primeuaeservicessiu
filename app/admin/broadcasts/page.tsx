@@ -23,6 +23,7 @@ import {
 } from '@/components/ui/dialog';
 import { Loader2, Plus, Send, Trash2, Edit } from 'lucide-react';
 import { toast } from 'sonner';
+import { adminFetch } from '@/lib/admin-fetch';
 
 interface Broadcast {
     id: string;
@@ -51,12 +52,7 @@ export default function BroadcastsPage() {
 
     const fetchBroadcasts = async () => {
         try {
-            const res = await fetch('/api/admin/broadcasts', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
+            const res = await adminFetch('/api/admin/broadcasts', { method: 'GET' });
             
             if (!res.ok) {
                 let errorMessage = `HTTP error! status: ${res.status}`;
@@ -96,14 +92,9 @@ export default function BroadcastsPage() {
     const handleCreate = async () => {
         try {
             setLoading(true);
-            const res = await fetch('/api/admin/broadcasts', {
+            const res = await adminFetch('/api/admin/broadcasts', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    subject,
-                    html: content,
-                    segmentId,
-                }),
+                body: JSON.stringify({ subject, html: content, segmentId }),
             });
 
             if (!res.ok) {
@@ -128,9 +119,7 @@ export default function BroadcastsPage() {
     const handleSend = async (id: string) => {
         try {
             setSendingId(id);
-            const res = await fetch(`/api/admin/broadcasts/${id}/send`, {
-                method: 'POST',
-            });
+            const res = await adminFetch(`/api/admin/broadcasts/${id}/send`, { method: 'POST' });
 
             if (!res.ok) {
                 const errorData = await res.json().catch(() => ({ error: 'Failed to send broadcast' }));
@@ -151,9 +140,7 @@ export default function BroadcastsPage() {
         if (!confirm('Are you sure you want to delete this broadcast?')) return;
 
         try {
-            const res = await fetch(`/api/admin/broadcasts/${id}`, {
-                method: 'DELETE',
-            });
+            const res = await adminFetch(`/api/admin/broadcasts/${id}`, { method: 'DELETE' });
 
             if (!res.ok) {
                 const errorData = await res.json().catch(() => ({ error: 'Failed to delete broadcast' }));
@@ -172,7 +159,7 @@ export default function BroadcastsPage() {
         try {
             setLoading(true);
             // Fetch full broadcast details
-            const res = await fetch(`/api/admin/broadcasts/${broadcast.id}`);
+            const res = await adminFetch(`/api/admin/broadcasts/${broadcast.id}`);
             
             if (!res.ok) {
                 const errorData = await res.json().catch(() => ({ error: 'Failed to load broadcast' }));
@@ -203,13 +190,9 @@ export default function BroadcastsPage() {
 
         try {
             setLoading(true);
-            const res = await fetch(`/api/admin/broadcasts/${editingId}`, {
+            const res = await adminFetch(`/api/admin/broadcasts/${editingId}`, {
                 method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    subject,
-                    html: content,
-                }),
+                body: JSON.stringify({ subject, html: content }),
             });
 
             if (!res.ok) {

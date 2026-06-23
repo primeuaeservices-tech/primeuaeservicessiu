@@ -1,38 +1,28 @@
-import { createServerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
-import { NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
+import { NextRequest, NextResponse } from 'next/server';
 
-export async function requireAdmin() {
+export async function requireAdmin(request: NextRequest) {
   try {
-    const cookieStore = cookies();
-    const supabase = createServerClient(
+    const authHeader = request.headers.get('Authorization');
+    const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
+
+    if (!token) {
+      return { user: null, error: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }) };
+    }
+
+    const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll() {
-            return cookieStore.getAll();
-          },
-          setAll(cookiesToSet) {
-            try {
-              cookiesToSet.forEach(({ name, value, options }) =>
-                cookieStore.set(name, value, options)
-              );
-            } catch {
-              // Route handler — setAll is best-effort
-            }
-          },
-        },
-      }
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     );
 
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-      return { session: null, error: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }) };
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+    if (error || !user) {
+      return { user: null, error: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }) };
     }
-    return { session, error: null };
+
+    return { user, error: null };
   } catch {
-    return { session: null, error: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }) };
+    return { user: null, error: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }) };
   }
 }
 
