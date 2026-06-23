@@ -427,7 +427,7 @@ export default function TicketsPage() {
 
             {/* Delete Confirmation Dialog */}
             <Dialog open={isDeleteConfirmOpen} onOpenChange={setIsDeleteConfirmOpen}>
-                <DialogContent className="max-w-sm">
+                <DialogContent className="max-w-sm" aria-describedby={undefined}>
                     <DialogHeader>
                         <DialogTitle className="flex items-center gap-2 text-red-600">
                             <Trash2 className="h-5 w-5" />
@@ -461,7 +461,7 @@ export default function TicketsPage() {
 
             {/* Ticket Details Dialog */}
             <Dialog open={isDialogOpen} onOpenChange={(open) => { setIsDialogOpen(open); if (!open) { setIsEditMode(false); setShowReplyForm(false); } }}>
-                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" aria-describedby={undefined}>
                     <DialogHeader>
                         <div className="flex items-center justify-between">
                             <DialogTitle className="text-2xl">Ticket Details</DialogTitle>

@@ -224,7 +224,7 @@ export default function BroadcastsPage() {
                             <Plus className="mr-2 h-4 w-4" /> New Broadcast
                         </Button>
                     </DialogTrigger>
-                    <DialogContent className="sm:max-w-[600px]">
+                    <DialogContent className="sm:max-w-[600px]" aria-describedby={undefined}>
                         <DialogHeader>
                             <DialogTitle>Create New Broadcast</DialogTitle>
                         </DialogHeader>
@@ -266,7 +266,7 @@ export default function BroadcastsPage() {
 
                 {/* Edit Broadcast Dialog */}
                 <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-                    <DialogContent className="sm:max-w-[600px]">
+                    <DialogContent className="sm:max-w-[600px]" aria-describedby={undefined}>
                         <DialogHeader>
                             <DialogTitle>Edit Broadcast</DialogTitle>
                         </DialogHeader>
